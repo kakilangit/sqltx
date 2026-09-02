@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kakilangit/tx"
+	"github.com/kakilangit/sqltx"
 )
 
 type rejectingBeginner struct {
@@ -22,7 +22,7 @@ func (db *rejectingBeginner) BeginTx(context.Context, *sql.TxOptions) (*sql.Tx, 
 func TestNegativeTimeoutIsRejectedBeforeBegin(t *testing.T) {
 	tests := []struct {
 		name   string
-		option func(time.Duration) tx.Option
+		option func(time.Duration) sqltx.Option
 	}{
 		{name: "transaction", option: WithTransactionTimeout},
 		{name: "statement", option: WithStatementTimeout},
@@ -32,7 +32,7 @@ func TestNegativeTimeoutIsRejectedBeforeBegin(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			db := &rejectingBeginner{}
-			transaction, err := tx.Begin(
+			transaction, err := sqltx.Begin(
 				context.Background(),
 				db,
 				test.option(-time.Millisecond),

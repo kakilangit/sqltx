@@ -18,4 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lifecycle benchmarks comparing the library with raw `database/sql`.
 - Linting, test, release automation, and unified Make targets.
 
-[0.1.0]: https://github.com/kakilangit/tx/releases/tag/v0.1.0
+[0.1.0]: https://github.com/kakilangit/sqltx/releases/tag/v0.1.0

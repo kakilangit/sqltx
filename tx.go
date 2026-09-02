@@ -1,4 +1,4 @@
-package tx
+package sqltx
 
 import (
 	"context"
@@ -92,7 +92,7 @@ func beginSQLTx(ctx context.Context, db Beginner, cfg config) (*sql.Tx, error) {
 	}
 	raw, err := db.BeginTx(ctx, sqlOptions)
 	if err != nil {
-		return nil, fmt.Errorf("tx: begin: %w", err)
+		return nil, fmt.Errorf("sqltx: begin: %w", err)
 	}
 	if raw == nil {
 		return nil, ErrNilSQLTx
@@ -124,11 +124,11 @@ func runSetupKind(options []Option, transaction *Tx, kind optionKind, index int)
 
 func runSetup(ctx context.Context, raw *sql.Tx, transaction *Tx, index int, setup SetupFunc) error {
 	if err := setup(ctx, raw); err != nil {
-		setupErr := fmt.Errorf("tx: setup %d: %w", index, err)
+		setupErr := fmt.Errorf("sqltx: setup %d: %w", index, err)
 		if rollbackErr := transaction.Close(); rollbackErr != nil {
 			return errors.Join(
 				setupErr,
-				fmt.Errorf("tx: rollback after setup: %w", rollbackErr),
+				fmt.Errorf("sqltx: rollback after setup: %w", rollbackErr),
 			)
 		}
 		return setupErr
