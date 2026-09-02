@@ -1,4 +1,4 @@
-package tx
+package sqltx
 
 import (
 	"context"
@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	ErrNilContext    = errors.New("tx: nil context")
-	ErrNilDB         = errors.New("tx: nil database")
-	ErrInvalidOption = errors.New("tx: invalid option")
-	ErrNilCallback   = errors.New("tx: nil callback")
-	ErrNilSetup      = errors.New("tx: nil setup function")
-	ErrInvalidBudget = errors.New("tx: budget must be greater than zero")
-	ErrNilSQLTx      = errors.New("tx: database returned a nil transaction")
+	ErrNilContext    = errors.New("sqltx: nil context")
+	ErrNilDB         = errors.New("sqltx: nil database")
+	ErrInvalidOption = errors.New("sqltx: invalid option")
+	ErrNilCallback   = errors.New("sqltx: nil callback")
+	ErrNilSetup      = errors.New("sqltx: nil setup function")
+	ErrInvalidBudget = errors.New("sqltx: budget must be greater than zero")
+	ErrNilSQLTx      = errors.New("sqltx: database returned a nil transaction")
 )
 
 // Beginner is implemented by *sql.DB and by database wrappers that can begin
@@ -68,7 +68,7 @@ func applyOptions(options []Option) (config, error) {
 	cfg := config{}
 	for i := range options {
 		if err := applyOption(&cfg, &options[i]); err != nil {
-			return config{}, fmt.Errorf("tx: option %d: %w", i+1, err)
+			return config{}, fmt.Errorf("sqltx: option %d: %w", i+1, err)
 		}
 	}
 	return cfg, nil

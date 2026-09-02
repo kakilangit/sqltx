@@ -1,4 +1,4 @@
-package tx
+package sqltx
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func Run(
 
 	defer func() {
 		if rollbackErr := transaction.Close(); rollbackErr != nil {
-			wrapped := fmt.Errorf("tx: rollback: %w", rollbackErr)
+			wrapped := fmt.Errorf("sqltx: rollback: %w", rollbackErr)
 			if err == nil {
 				err = wrapped
 			} else {
@@ -37,10 +37,10 @@ func Run(
 	// The transaction context is derived from ctx by Begin and additionally
 	// carries the optional transaction budget.
 	if err := fn(transaction.Context(), transaction); err != nil { //nolint:contextcheck
-		return fmt.Errorf("tx: callback: %w", err)
+		return fmt.Errorf("sqltx: callback: %w", err)
 	}
 	if err := transaction.Commit(); err != nil {
-		return fmt.Errorf("tx: commit: %w", err)
+		return fmt.Errorf("sqltx: commit: %w", err)
 	}
 	return nil
 }

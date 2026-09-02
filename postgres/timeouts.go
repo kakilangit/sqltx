@@ -7,28 +7,28 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kakilangit/tx"
+	"github.com/kakilangit/sqltx"
 )
 
 // WithTransactionTimeout sets PostgreSQL transaction_timeout locally for the
 // transaction. transaction_timeout requires a PostgreSQL version that
 // supports the setting.
-func WithTransactionTimeout(duration time.Duration) tx.Option {
+func WithTransactionTimeout(duration time.Duration) sqltx.Option {
 	return timeoutOption("transaction_timeout", duration)
 }
 
 // WithStatementTimeout sets PostgreSQL statement_timeout locally for the
 // transaction.
-func WithStatementTimeout(duration time.Duration) tx.Option {
+func WithStatementTimeout(duration time.Duration) sqltx.Option {
 	return timeoutOption("statement_timeout", duration)
 }
 
 // WithLockTimeout sets PostgreSQL lock_timeout locally for the transaction.
-func WithLockTimeout(duration time.Duration) tx.Option {
+func WithLockTimeout(duration time.Duration) sqltx.Option {
 	return timeoutOption("lock_timeout", duration)
 }
 
-func timeoutOption(name string, duration time.Duration) tx.Option {
+func timeoutOption(name string, duration time.Duration) sqltx.Option {
 	validate := func() error {
 		if duration < 0 {
 			return fmt.Errorf("postgres: %s must not be negative", name)
@@ -36,7 +36,7 @@ func timeoutOption(name string, duration time.Duration) tx.Option {
 		return nil
 	}
 
-	setup := func(ctx context.Context, dbtx tx.DBTX) error {
+	setup := func(ctx context.Context, dbtx sqltx.DBTX) error {
 		value := formatDuration(duration)
 		if _, err := dbtx.ExecContext(
 			ctx,
@@ -49,7 +49,7 @@ func timeoutOption(name string, duration time.Duration) tx.Option {
 		return nil
 	}
 
-	return tx.NewSetupOption(validate, setup)
+	return sqltx.NewSetupOption(validate, setup)
 }
 
 func formatDuration(duration time.Duration) string {

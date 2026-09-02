@@ -1,4 +1,4 @@
-# tx
+# sqltx
 
 A small Go library that makes `database/sql` transactions easier and safer.
 
@@ -11,7 +11,7 @@ A small Go library that makes `database/sql` transactions easier and safer.
 ## Install
 
 ```sh
-go get github.com/kakilangit/tx
+go get github.com/kakilangit/sqltx
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ go get github.com/kakilangit/tx
 returns `nil`, and rolls back on an error or panic.
 
 ```go
-err := tx.Run(ctx, db, func(ctx context.Context, transaction *tx.Tx) error {
+err := sqltx.Run(ctx, db, func(ctx context.Context, transaction *sqltx.Tx) error {
     _, err := transaction.ExecContext(ctx,
         `UPDATE accounts SET balance = balance - $1 WHERE id = $2`,
         amount,
@@ -28,8 +28,8 @@ err := tx.Run(ctx, db, func(ctx context.Context, transaction *tx.Tx) error {
     )
     return err
 },
-    tx.WithBudget(5*time.Second),
-    tx.WithTxOptions(sql.TxOptions{
+    sqltx.WithBudget(5*time.Second),
+    sqltx.WithTxOptions(sql.TxOptions{
         Isolation: sql.LevelSerializable,
     }),
 )
@@ -39,7 +39,7 @@ For manual control, defer `Close` right after `Begin`. It safely becomes a
 no-op after commit.
 
 ```go
-transaction, err := tx.Begin(ctx, db, tx.WithBudget(5*time.Second))
+transaction, err := sqltx.Begin(ctx, db, sqltx.WithBudget(5*time.Second))
 if err != nil {
     return err
 }
@@ -59,7 +59,7 @@ Commit errors are returned to the caller and are never retried automatically.
 Use a setup hook to configure the transaction before it is returned:
 
 ```go
-tx.WithSetup(func(ctx context.Context, dbtx tx.DBTX) error {
+sqltx.WithSetup(func(ctx context.Context, dbtx sqltx.DBTX) error {
     _, err := dbtx.ExecContext(ctx, `SET LOCAL ROLE app_user`)
     return err
 })
